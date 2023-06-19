@@ -1,46 +1,167 @@
-# Getting Started with Create React App
+# Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+```
+  npx create-react-app keeptrack --template typescript
+```
 
-## Available Scripts
+### .vscode/setting.json
 
-In the project directory, you can run:
+```
+    {
+    "eslint.validate": [
+        "javascript",
+        "javascriptreact",
+        { "language": "typescript", "autoFix": true },
+        { "language": "typescriptreact", "autoFix": true }
+    ],
+    "editor.formatOnSave": true
+    }
+```
 
-### `npm start`
+### eslintrc.json
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```
+    {
+    "extends": ["react-app", "prettier"],
+    "plugins": ["prettier"],
+    "rules": {
+        "prettier/prettier": "error"
+    }
+    }
+```
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### prettier
 
-### `npm test`
+- install
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+    npm install prettier --save-dev
+    npm install eslint-config-prettier eslint-plugin-prettier --save-dev
+```
 
-### `npm run build`
+- config: .prettierrc
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
+    {
+    "printWidth": 80,
+    "singleQuote": true,
+    "semi": true,
+    "tabWidth": 2,
+    "trailingComma": "all",
+    "endOfLine": "auto"
+    }
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### tailwind
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- install
 
-### `npm run eject`
+```
+  npm install -D tailwindcss postcss autoprefixer
+  npx tailwindcss init -p
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- config tailwind.config.js
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```
+    module.exports = {
+    content: ['./src/**/*.{js,jsx,ts,tsx}'],
+    theme: {
+        extend: {},
+    },
+    plugins: [],
+    };
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- config index.css
 
-## Learn More
+```
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### routing
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+    npm install react-router-dom
+    npm install @types/react-router-dom --save-dev
+```
+
+### redux, redux toolKit
+
+```
+    npm install @types/react-redux
+    npm install react-redux
+    npm install @reduxjs/toolkit
+```
+
+#### Redux configuration
+
+- reducer.ts
+
+```
+    import { combineReducers, configureStore } from '@reduxjs/toolkit';
+    import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+    import { ObjectState, objectSlice } from './Slices';
+
+    const rootReducer = combineReducers({
+        objects: objectSlice.reducer,
+    });
+    export const store = configureStore({
+        reducer: rootReducer,
+    });
+
+    export type RootState = ReturnType<typeof rootReducer>;
+    export type AppDispatch = typeof store.dispatch;
+    export const useAppDispatch: () => AppDispatch = useDispatch;
+    export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+
+    export interface AppState {
+    object: ObjectState;
+    }
+```
+
+### fontAwesome
+
+```
+    npm i --save @fortawesome/fontawesome-svg-core
+    npm install --save @fortawesome/free-solid-svg-icons
+    npm install --save @fortawesome/react-fontawesome
+    npm i --save @fortawesome/pro-regular-svg-icons
+```
+
+### kiểm tra hiệu suất mạng sử dụng tool WebSurge
+
+```
+    https://websurge.west-wind.com/download
+```
+
+### Tải xuống module URL Rewrite của IIS để dùng URL của React App trên IIS khi tự nhập link liên kết
+
+```
+    https://www.iis.net/downloads/microsoft/url-rewrite.
+```
+
+- Tạo file web.config trong thư mục build và thêm
+
+```
+    <?xml version="1.0" encoding="utf-8"?>
+    <configuration>
+    <system.webServer>
+        <rewrite>
+        <rules>
+            <rule name="React Router" stopProcessing="true">
+            <match url=".*" />
+            <conditions logicalGrouping="MatchAll">
+                <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
+                <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
+            </conditions>
+            <action type="Rewrite" url="/" />
+            </rule>
+        </rules>
+        </rewrite>
+    </system.webServer>
+    </configuration>
+```
